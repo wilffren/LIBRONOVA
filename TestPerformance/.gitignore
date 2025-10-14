@@ -1,0 +1,66 @@
+# LibroNova - Git Ignore File
+
+# Compiled class files
+*.class
+
+# Maven build directory
+development-tools/target/
+target/
+
+# Log files
+logs/*.log
+logs/*.log.*
+*.log
+*.log.*
+
+# Temporary files
+temp-files/
+*.tmp
+*.temp
+
+# IDE files
+.idea/
+*.iml
+.vscode/settings.json
+.project
+.classpath
+.settings/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Java heap dumps
+*.hprof
+
+# Database files
+*.db
+*.sqlite
+
+# CSV exports (generated files)
+*.csv
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+nbactions.xml
+nb-configuration.xml
+nb-run.sh
+
+# Application specific
+dependency-reduced-pom.xml
+
+# Keep distribution files (these are for end users)
+!distribution/

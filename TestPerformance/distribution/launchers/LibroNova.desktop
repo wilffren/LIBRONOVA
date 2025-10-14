@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LibroNova - Library Management System
+Comment=Complete library management system for books, members, and loans
+Exec=java -jar "%k/target/LibroNova-executable.jar"
+Icon=%k/docs/libronova-icon.png
+Path=%k
+Terminal=false
+Categories=Office;Education;
+StartupWMClass=LibroNova
+MimeType=application/x-java-archive;
+StartupNotify=true
