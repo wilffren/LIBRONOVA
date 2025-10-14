@@ -12,6 +12,7 @@ import com.mycompany.libronova.infra.config.LoggingConfig;
 import com.mycompany.libronova.repository.jdbc.*;
 import com.mycompany.libronova.service.*;
 import com.mycompany.libronova.service.impl.*;
+import java.io.IOException;
 
 /**
  * Main JavaFX Application for LibroNova.
@@ -26,6 +27,7 @@ public class MainApp extends Application {
     private BookService bookService;
     private MemberService memberService;
     private LoanService loanService;
+    private ReportService reportService;
 
     // Views
     private BookView bookView;
@@ -82,6 +84,7 @@ public class MainApp extends Application {
         bookService = new BookServiceImpl(bookRepo);
         memberService = new MemberServiceImpl(memberRepo);
         loanService = new LoanServiceImpl(loanRepo, bookRepo, memberRepo);
+        reportService = new ReportServiceImpl(bookService, loanService);
     }
 
     /**
@@ -127,8 +130,11 @@ public class MainApp extends Application {
             primaryStage.hide();
             loanView.show(primaryStage);
         });
-
-        Button btnExit = new Button("Exit");
+        
+        Button btnReports = createMenuButton("Reports & Export");
+        btnReports.setOnAction(e -> showReportsMenu());
+        
+        Button btnExit = createMenuButton("Exit");
         btnExit.setStyle(
                 "-fx-background-color: #e74c3c;"
                 + "-fx-text-fill: white;"
@@ -144,7 +150,7 @@ public class MainApp extends Application {
         VBox titleBox = new VBox(5, titleLabel, subtitleLabel);
         titleBox.setAlignment(Pos.CENTER);
 
-        VBox buttonBox = new VBox(15, btnBooks, btnMembers, btnLoans, btnExit);
+        VBox buttonBox = new VBox(15, btnBooks, btnMembers, btnLoans, btnReports, btnExit);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(20, 0, 0, 0));
 
@@ -188,6 +194,50 @@ public class MainApp extends Application {
      */
     private void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    
+    /**
+     * Shows the reports and export menu.
+     */
+    private void showReportsMenu() {
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+        dialog.setTitle("Reports & Export");
+        dialog.setHeaderText("Select an export option:");
+        
+        ButtonType btnBookCatalog = new ButtonType("Book Catalog CSV");
+        ButtonType btnOverdueLoans = new ButtonType("Overdue Loans CSV");
+        ButtonType btnCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        
+        dialog.getButtonTypes().setAll(btnBookCatalog, btnOverdueLoans, btnCancel);
+        
+        dialog.showAndWait().ifPresent(response -> {
+            try {
+                if (response == btnBookCatalog) {
+                    String fileName = reportService.exportBookCatalog();
+                    showInfoAlert("Export Successful", "Book catalog exported to: " + fileName);
+                    reportService.logUserActivity("USER", "EXPORT_BOOKS_UI", "Book catalog exported via main menu");
+                    
+                } else if (response == btnOverdueLoans) {
+                    String fileName = reportService.exportOverdueLoans();
+                    showInfoAlert("Export Successful", "Overdue loans exported to: " + fileName);
+                    reportService.logUserActivity("USER", "EXPORT_OVERDUE_UI", "Overdue loans exported via main menu");
+                }
+            } catch (Exception e) {
+                reportService.logSystemError("MainApp", "Export failed", e);
+                showErrorAlert("Export Failed", "Error during export: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Shows an info alert.
+     */
+    private void showInfoAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
