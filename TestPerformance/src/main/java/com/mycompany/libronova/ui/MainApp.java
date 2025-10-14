@@ -181,8 +181,8 @@ public class MainApp extends Application {
                     initializeViews();
                 }
                 
+                // Create independent stage, not owned by primary stage
                 Stage newStage = new Stage();
-                newStage.initOwner(primaryStage);
                 bookView.show(newStage);
                 
                 LoggingConfig.logInfo(MainApp.class.getName(), "Book Management view opened successfully");
@@ -202,8 +202,8 @@ public class MainApp extends Application {
                     initializeViews();
                 }
                 
+                // Create independent stage, not owned by primary stage
                 Stage newStage = new Stage();
-                newStage.initOwner(primaryStage);
                 memberView.show(newStage);
                 
                 LoggingConfig.logInfo(MainApp.class.getName(), "Member Management view opened successfully");
@@ -223,8 +223,8 @@ public class MainApp extends Application {
                     initializeViews();
                 }
                 
+                // Create independent stage, not owned by primary stage
                 Stage newStage = new Stage();
-                newStage.initOwner(primaryStage);
                 loanView.show(newStage);
                 
                 LoggingConfig.logInfo(MainApp.class.getName(), "Loan Management view opened successfully");
