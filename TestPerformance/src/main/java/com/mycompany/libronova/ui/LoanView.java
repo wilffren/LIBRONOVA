@@ -185,10 +185,56 @@ public class LoanView {
         cboBook = new ComboBox<>();
         cboBook.setPrefWidth(280);
         cboBook.setPromptText("Select a book...");
+        // Custom cell factory to display book title and author
+        cboBook.setCellFactory(listView -> new ListCell<Book>() {
+            @Override
+            protected void updateItem(Book book, boolean empty) {
+                super.updateItem(book, empty);
+                if (empty || book == null) {
+                    setText(null);
+                } else {
+                    setText(book.getTitle() + " - " + book.getAuthor() + " (Stock: " + book.getAvailableStock() + ")");
+                }
+            }
+        });
+        cboBook.setButtonCell(new ListCell<Book>() {
+            @Override
+            protected void updateItem(Book book, boolean empty) {
+                super.updateItem(book, empty);
+                if (empty || book == null) {
+                    setText("Select a book...");
+                } else {
+                    setText(book.getTitle() + " - " + book.getAuthor());
+                }
+            }
+        });
         
         cboMember = new ComboBox<>();
         cboMember.setPrefWidth(280);
         cboMember.setPromptText("Select a member...");
+        // Custom cell factory to display member name and number
+        cboMember.setCellFactory(listView -> new ListCell<Member>() {
+            @Override
+            protected void updateItem(Member member, boolean empty) {
+                super.updateItem(member, empty);
+                if (empty || member == null) {
+                    setText(null);
+                } else {
+                    setText(member.getName() + " (" + member.getMemberNumber() + ")");
+                }
+            }
+        });
+        cboMember.setButtonCell(new ListCell<Member>() {
+            @Override
+            protected void updateItem(Member member, boolean empty) {
+                super.updateItem(member, empty);
+                if (empty || member == null) {
+                    setText("Select a member...");
+                } else {
+                    setText(member.getName() + " (" + member.getMemberNumber() + ")");
+                }
+            }
+        });
         
         txtLoanDays = new TextField("14"); // Default 14 days
         txtLoanDays.setPrefWidth(280);
@@ -254,7 +300,15 @@ public class LoanView {
     private void loadBooks() {
         try {
             List<Book> books = bookService.listAllBooks();
-            cboBook.setItems(FXCollections.observableArrayList(books));
+            if (books.isEmpty()) {
+                cboBook.setItems(FXCollections.observableArrayList());
+                cboBook.setPromptText("No books available");
+            } else {
+                cboBook.setItems(FXCollections.observableArrayList(books.stream()
+                    .filter(book -> book.getAvailableStock() > 0) // Only show books with available stock
+                    .toList()));
+                cboBook.setPromptText("Select a book...");
+            }
         } catch (DatabaseException e) {
             showError("Database Error", "Failed to load books: " + e.getMessage());
         }
@@ -263,7 +317,13 @@ public class LoanView {
     private void loadMembers() {
         try {
             List<Member> members = memberService.listActiveMembers();
-            cboMember.setItems(FXCollections.observableArrayList(members));
+            if (members.isEmpty()) {
+                cboMember.setItems(FXCollections.observableArrayList());
+                cboMember.setPromptText("No active members available");
+            } else {
+                cboMember.setItems(FXCollections.observableArrayList(members));
+                cboMember.setPromptText("Select a member...");
+            }
         } catch (DatabaseException e) {
             showError("Database Error", "Failed to load members: " + e.getMessage());
         }
@@ -283,7 +343,9 @@ public class LoanView {
         try {
             List<Loan> loans = loanService.listAllLoans();
             loanList.clear();
-            loanList.addAll(loans.stream().filter(loan -> loan.getStatus() == LoanStatus.ACTIVE).toList());
+            loans.stream()
+                .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE)
+                .forEach(loanList::add);
         } catch (DatabaseException e) {
             showError("Database Error", "Failed to load active loans: " + e.getMessage());
         }
@@ -303,19 +365,42 @@ public class LoanView {
         Book selectedBook = cboBook.getValue();
         Member selectedMember = cboMember.getValue();
         
-        if (selectedBook == null || selectedMember == null) {
-            showWarning("Incomplete Selection", "Please select both a book and a member.");
+        if (selectedBook == null) {
+            showWarning("Book Selection Required", "Please select a book for the loan.");
+            return;
+        }
+        
+        if (selectedMember == null) {
+            showWarning("Member Selection Required", "Please select a member for the loan.");
+            return;
+        }
+        
+        if (selectedBook.getAvailableStock() <= 0) {
+            showWarning("Book Unavailable", "The selected book is not available (no stock).");
             return;
         }
         
         try {
-            int loanDays = Integer.parseInt(txtLoanDays.getText().trim());
+            String loanDaysText = txtLoanDays.getText().trim();
+            if (loanDaysText.isEmpty()) {
+                showError("Invalid Input", "Please enter the number of loan days.");
+                return;
+            }
+            
+            int loanDays = Integer.parseInt(loanDaysText);
+            if (loanDays <= 0 || loanDays > 365) {
+                showError("Invalid Input", "Loan days must be between 1 and 365.");
+                return;
+            }
+            
             loanService.createLoan(selectedBook.getId(), selectedMember.getId(), loanDays);
             loadLoans();
+            loadBooks(); // Refresh books to show updated stock
             clearForm();
-            showInfo("Success", "Loan created successfully!");
+            showInfo("Success", "Loan created successfully!\nBook: " + selectedBook.getTitle() + 
+                    "\nMember: " + selectedMember.getName() + " (" + selectedMember.getMemberNumber() + ")");
         } catch (NumberFormatException e) {
-            showError("Invalid Input", "Please enter a valid number of loan days.");
+            showError("Invalid Input", "Please enter a valid number for loan days.");
         } catch (Exception e) {
             showError("Error", "Failed to create loan: " + e.getMessage());
         }
@@ -324,22 +409,49 @@ public class LoanView {
     private void returnBook() {
         Loan selectedLoan = loanTable.getSelectionModel().getSelectedItem();
         if (selectedLoan == null) {
-            showWarning("No Selection", "Please select a loan to return.");
+            showWarning("No Loan Selected", "Please select a loan from the table to return the book.");
             return;
         }
         
         if (selectedLoan.getStatus() != LoanStatus.ACTIVE) {
-            showWarning("Invalid Operation", "Only active loans can be returned.");
+            showWarning("Cannot Return", "Only active loans can be returned. This loan is already: " + selectedLoan.getStatus());
             return;
         }
         
-        try {
-            loanService.returnBook(selectedLoan.getId());
-            loadLoans();
-            showInfo("Success", "Book returned successfully!");
-        } catch (Exception e) {
-            showError("Error", "Failed to return book: " + e.getMessage());
-        }
+        // Confirm return
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirm Book Return");
+        confirmDialog.setHeaderText("Return Book");
+        String bookTitle = selectedLoan.getBook() != null ? selectedLoan.getBook().getTitle() : "Unknown";
+        String memberName = selectedLoan.getMember() != null ? selectedLoan.getMember().getName() : "Unknown";
+        confirmDialog.setContentText("Are you sure you want to return this book?\n\nBook: " + bookTitle + 
+                                    "\nMember: " + memberName + 
+                                    "\nLoan Date: " + selectedLoan.getLoanDate());
+        
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    loanService.returnBook(selectedLoan.getId());
+                    loadLoans();
+                    loadBooks(); // Refresh books to show updated stock
+                    clearForm();
+                    
+                    String successMessage = "Book returned successfully!\n\nBook: " + bookTitle + 
+                                          "\nMember: " + memberName + 
+                                          "\nReturn Date: " + java.time.LocalDate.now();
+                    
+                    // Check if it was overdue
+                    if (selectedLoan.isOverdue()) {
+                        long overdueDays = selectedLoan.overdueDays();
+                        successMessage += "\n\n⚠️ Note: This book was " + overdueDays + " day(s) overdue.";
+                    }
+                    
+                    showInfo("Return Successful", successMessage);
+                } catch (Exception e) {
+                    showError("Return Failed", "Failed to return book: " + e.getMessage());
+                }
+            }
+        });
     }
     
     private void calculateFine() {

@@ -1,12 +1,17 @@
 package com.mycompany.libronova.repository.jdbc;
 
+import com.mycompany.libronova.domain.Book;
 import com.mycompany.libronova.domain.Loan;
 import com.mycompany.libronova.domain.LoanStatus;
+import com.mycompany.libronova.domain.Member;
+import com.mycompany.libronova.domain.MemberStatus;
+import com.mycompany.libronova.domain.UserRole;
 import com.mycompany.libronova.exceptions.DatabaseException;
 import com.mycompany.libronova.infra.config.ConnectionDB;
 import com.mycompany.libronova.repository.LoanRepository;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -119,7 +124,13 @@ public class LoanRepositoryJDBC implements LoanRepository {
     
     @Override
     public List<Loan> findAll() throws DatabaseException {
-        String sql = "SELECT * FROM loans ORDER BY loan_date DESC";
+        String sql = "SELECT l.*, " +
+                    "b.isbn, b.title, b.author, b.publisher, b.year, b.available_stock, b.total_stock, " +
+                    "m.name, m.email, m.member_number, m.status as member_status, m.registration_date " +
+                    "FROM loans l " +
+                    "LEFT JOIN books b ON l.book_id = b.id " +
+                    "LEFT JOIN members m ON l.member_id = m.id " +
+                    "ORDER BY l.loan_date DESC";
         List<Loan> loans = new ArrayList<>();
         
         try (Connection conn = connectionDB.getConnection();
@@ -127,7 +138,7 @@ public class LoanRepositoryJDBC implements LoanRepository {
              ResultSet rs = stmt.executeQuery()) {
             
             while (rs.next()) {
-                loans.add(mapResultSetToLoan(rs));
+                loans.add(mapResultSetToLoanWithDetails(rs));
             }
             
             return loans;
@@ -188,7 +199,13 @@ public class LoanRepositoryJDBC implements LoanRepository {
     
     @Override
     public List<Loan> findOverdue() throws DatabaseException {
-        String sql = "SELECT * FROM loans WHERE status = 'ACTIVE' AND expected_return_date < CURDATE()";
+        String sql = "SELECT l.*, " +
+                    "b.isbn, b.title, b.author, b.publisher, b.year, b.available_stock, b.total_stock, " +
+                    "m.name, m.email, m.member_number, m.status as member_status, m.registration_date " +
+                    "FROM loans l " +
+                    "LEFT JOIN books b ON l.book_id = b.id " +
+                    "LEFT JOIN members m ON l.member_id = m.id " +
+                    "WHERE l.status = 'ACTIVE' AND l.expected_return_date < CURDATE()";
         List<Loan> loans = new ArrayList<>();
         
         try (Connection conn = connectionDB.getConnection();
@@ -196,7 +213,7 @@ public class LoanRepositoryJDBC implements LoanRepository {
              ResultSet rs = stmt.executeQuery()) {
             
             while (rs.next()) {
-                loans.add(mapResultSetToLoan(rs));
+                loans.add(mapResultSetToLoanWithDetails(rs));
             }
             
             return loans;
@@ -221,6 +238,49 @@ public class LoanRepositoryJDBC implements LoanRepository {
         }
         
         loan.setStatus(LoanStatus.valueOf(rs.getString("status")));
+        return loan;
+    }
+    
+    private Loan mapResultSetToLoanWithDetails(ResultSet rs) throws SQLException {
+        Loan loan = new Loan();
+        loan.setId(rs.getLong("id"));
+        loan.setLoanDate(rs.getDate("loan_date").toLocalDate());
+        loan.setExpectedReturnDate(rs.getDate("expected_return_date").toLocalDate());
+        
+        Date actualReturnDate = rs.getDate("actual_return_date");
+        if (actualReturnDate != null) {
+            loan.setActualReturnDate(actualReturnDate.toLocalDate());
+        }
+        
+        loan.setStatus(LoanStatus.valueOf(rs.getString("status")));
+        
+        // Map Book details
+        Book book = new Book();
+        book.setId(rs.getLong("book_id"));
+        book.setIsbn(rs.getString("isbn"));
+        book.setTitle(rs.getString("title"));
+        book.setAuthor(rs.getString("author"));
+        book.setPublisher(rs.getString("publisher"));
+        if (rs.getObject("year") != null) {
+            book.setYear(Year.of(rs.getInt("year")));
+        }
+        book.setAvailableStock(rs.getInt("available_stock"));
+        book.setTotalStock(rs.getInt("total_stock"));
+        loan.setBook(book);
+        
+        // Map Member details
+        Member member = new Member();
+        member.setId(rs.getLong("member_id"));
+        member.setName(rs.getString("name"));
+        member.setEmail(rs.getString("email"));
+        member.setMemberNumber(rs.getString("member_number"));
+        member.setStatus(MemberStatus.valueOf(rs.getString("member_status")));
+        if (rs.getDate("registration_date") != null) {
+            member.setRegistrationDate(rs.getDate("registration_date").toLocalDate());
+        }
+        member.setRole(UserRole.MEMBER);
+        loan.setMember(member);
+        
         return loan;
     }
 }
