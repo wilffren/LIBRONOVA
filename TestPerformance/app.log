@@ -26,3 +26,21 @@
 [2025-10-14 15:39:00] [INFO] [com.mycompany.libronova.service.impl.ReportServiceImpl] USER_ACTIVITY - User: SYSTEM, Action: EXPORT_BOOKS, Details: Exported 1 books to book_catalog_2025-10-14_15-39-00.csv
 [2025-10-14 15:39:00] [INFO] [com.mycompany.libronova.service.impl.ReportServiceImpl] Book catalog export completed successfully. File: book_catalog_2025-10-14_15-39-00.csv
 [2025-10-14 15:39:03] [INFO] [com.mycompany.libronova.service.impl.ReportServiceImpl] USER_ACTIVITY - User: USER, Action: EXPORT_BOOKS_UI, Details: Book catalog exported via main menu
+[2025-10-14 15:43:51] [INFO] [com.mycompany.libronova.infra.config.LoggingConfig] Logging system initialized successfully
+[2025-10-14 15:43:51] [INFO] [com.mycompany.libronova.ui.MainApp] LibroNova application starting...
+[2025-10-14 15:43:51] [INFO] [com.mycompany.libronova.infra.config.ConnectionDB] Database configuration loaded successfully
+[2025-10-14 15:43:52] [INFO] [com.mycompany.libronova.ui.MainApp] Database connection established successfully
+[2025-10-14 15:43:52] [INFO] [com.mycompany.libronova.ui.MainApp] Services initialized successfully
+[2025-10-14 15:43:52] [INFO] [com.mycompany.libronova.ui.MainApp] Views initialized successfully
+[2025-10-14 15:43:52] [INFO] [com.mycompany.libronova.ui.MainApp] LibroNova application started successfully
+[2025-10-14 15:44:04] [INFO] [com.mycompany.libronova.repository.jdbc.BookRepositoryJDBC] Book updated: 1
+[2025-10-14 15:44:04] [INFO] [com.mycompany.libronova.repository.jdbc.LoanRepositoryJDBC] Loan updated: 1
+[2025-10-14 15:44:04] [INFO] [com.mycompany.libronova.service.impl.LoanServiceImpl] Book returned for loan: 1
+[2025-10-14 15:47:27] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Registering book: 6954
+[2025-10-14 15:47:27] [INFO] [com.mycompany.libronova.repository.jdbc.BookRepositoryJDBC] Book saved: 6954
+[2025-10-14 15:47:27] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Book registered successfully: 2
+[2025-10-14 15:47:34] [INFO] [com.mycompany.libronova.repository.jdbc.BookRepositoryJDBC] Book deleted: 2
+[2025-10-14 15:47:34] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Book deleted: 2
+[2025-10-14 15:48:23] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Registering book: 1214
+[2025-10-14 15:48:23] [INFO] [com.mycompany.libronova.repository.jdbc.BookRepositoryJDBC] Book saved: 1214
+[2025-10-14 15:48:23] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Book registered successfully: 3

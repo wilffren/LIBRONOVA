@@ -101,7 +101,13 @@ public class LoanRepositoryJDBC implements LoanRepository {
     
     @Override
     public Optional<Loan> findById(Long id) throws DatabaseException {
-        String sql = "SELECT * FROM loans WHERE id = ?";
+        String sql = "SELECT l.*, " +
+                    "b.isbn, b.title, b.author, b.publisher, b.year, b.available_stock, b.total_stock, " +
+                    "m.name, m.email, m.member_number, m.status as member_status, m.registration_date " +
+                    "FROM loans l " +
+                    "LEFT JOIN books b ON l.book_id = b.id " +
+                    "LEFT JOIN members m ON l.member_id = m.id " +
+                    "WHERE l.id = ?";
         
         try (Connection conn = connectionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -110,7 +116,7 @@ public class LoanRepositoryJDBC implements LoanRepository {
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapResultSetToLoan(rs));
+                    return Optional.of(mapResultSetToLoanWithDetails(rs));
                 }
             }
             
@@ -151,7 +157,13 @@ public class LoanRepositoryJDBC implements LoanRepository {
     
     @Override
     public List<Loan> findActiveByMemberId(Long memberId) throws DatabaseException {
-        String sql = "SELECT * FROM loans WHERE member_id = ? AND status = 'ACTIVE'";
+        String sql = "SELECT l.*, " +
+                    "b.isbn, b.title, b.author, b.publisher, b.year, b.available_stock, b.total_stock, " +
+                    "m.name, m.email, m.member_number, m.status as member_status, m.registration_date " +
+                    "FROM loans l " +
+                    "LEFT JOIN books b ON l.book_id = b.id " +
+                    "LEFT JOIN members m ON l.member_id = m.id " +
+                    "WHERE l.member_id = ? AND l.status = 'ACTIVE'";
         List<Loan> loans = new ArrayList<>();
         
         try (Connection conn = connectionDB.getConnection();
@@ -161,7 +173,7 @@ public class LoanRepositoryJDBC implements LoanRepository {
             
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    loans.add(mapResultSetToLoan(rs));
+                    loans.add(mapResultSetToLoanWithDetails(rs));
                 }
             }
             
@@ -175,7 +187,13 @@ public class LoanRepositoryJDBC implements LoanRepository {
     
     @Override
     public List<Loan> findActiveByBookId(Long bookId) throws DatabaseException {
-        String sql = "SELECT * FROM loans WHERE book_id = ? AND status = 'ACTIVE'";
+        String sql = "SELECT l.*, " +
+                    "b.isbn, b.title, b.author, b.publisher, b.year, b.available_stock, b.total_stock, " +
+                    "m.name, m.email, m.member_number, m.status as member_status, m.registration_date " +
+                    "FROM loans l " +
+                    "LEFT JOIN books b ON l.book_id = b.id " +
+                    "LEFT JOIN members m ON l.member_id = m.id " +
+                    "WHERE l.book_id = ? AND l.status = 'ACTIVE'";
         List<Loan> loans = new ArrayList<>();
         
         try (Connection conn = connectionDB.getConnection();
@@ -185,7 +203,7 @@ public class LoanRepositoryJDBC implements LoanRepository {
             
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    loans.add(mapResultSetToLoan(rs));
+                    loans.add(mapResultSetToLoanWithDetails(rs));
                 }
             }
             
@@ -224,22 +242,6 @@ public class LoanRepositoryJDBC implements LoanRepository {
         }
     }
     
-    private Loan mapResultSetToLoan(ResultSet rs) throws SQLException {
-        Loan loan = new Loan();
-        loan.setId(rs.getLong("id"));
-        // Note: In a complete implementation, we would need to fetch Book and Member objects
-        // For simplicity, we're only setting basic properties
-        loan.setLoanDate(rs.getDate("loan_date").toLocalDate());
-        loan.setExpectedReturnDate(rs.getDate("expected_return_date").toLocalDate());
-        
-        Date actualReturnDate = rs.getDate("actual_return_date");
-        if (actualReturnDate != null) {
-            loan.setActualReturnDate(actualReturnDate.toLocalDate());
-        }
-        
-        loan.setStatus(LoanStatus.valueOf(rs.getString("status")));
-        return loan;
-    }
     
     private Loan mapResultSetToLoanWithDetails(ResultSet rs) throws SQLException {
         Loan loan = new Loan();
