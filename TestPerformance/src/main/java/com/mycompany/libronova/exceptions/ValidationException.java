@@ -19,7 +19,7 @@ public class ValidationException extends LibroNovaException {
     }
     
     public ValidationException(List<String> errors) {
-        super("Errores de validación: " + String.join(", ", errors));
+        super("Validations Errors: " + String.join(", ", errors));
         this.errors = new ArrayList<>(errors);
     }
     

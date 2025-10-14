@@ -11,7 +11,7 @@ public class EntityNotFoundException extends LibroNovaException {
     private final Object identifier;
     
     public EntityNotFoundException(String entityType, Object identifier) {
-        super(String.format("%s con identificador '%s' no encontrado", 
+        super(String.format("%s with identifier '%s' not found", 
                 entityType, identifier));
         this.entityType = entityType;
         this.identifier = identifier;

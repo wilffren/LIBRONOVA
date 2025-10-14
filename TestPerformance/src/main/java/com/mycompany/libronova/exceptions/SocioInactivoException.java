@@ -10,7 +10,7 @@ public class SocioInactivoException extends LibroNovaException {
     private final String numeroSocio;
     
     public SocioInactivoException(String numeroSocio) {
-        super(String.format("El socio con número '%s' no está activo", numeroSocio));
+        super(String.format("The member with number '%s' is not active", numeroSocio));
         this.numeroSocio = numeroSocio;
     }
     

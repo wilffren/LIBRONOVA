@@ -11,7 +11,7 @@ public class StockInsuficienteException extends LibroNovaException {
     private final int stockDisponible;
     
     public StockInsuficienteException(String isbn, int stockDisponible) {
-        super(String.format("Stock insuficiente para el libro ISBN '%s'. Disponible: %d", 
+        super(String.format("Insufficient stock for the book with ISBN '%s'. Available: %d", 
                 isbn, stockDisponible));
         this.isbn = isbn;
         this.stockDisponible = stockDisponible;
