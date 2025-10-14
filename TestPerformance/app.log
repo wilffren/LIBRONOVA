@@ -44,3 +44,28 @@
 [2025-10-14 15:48:23] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Registering book: 1214
 [2025-10-14 15:48:23] [INFO] [com.mycompany.libronova.repository.jdbc.BookRepositoryJDBC] Book saved: 1214
 [2025-10-14 15:48:23] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Book registered successfully: 3
+[2025-10-14 15:49:59] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Registering member: 1473
+[2025-10-14 15:49:59] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member saved: 1473
+[2025-10-14 15:50:08] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Updating member: 2
+[2025-10-14 15:50:08] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member updated: 2
+[2025-10-14 15:50:19] [INFO] [com.mycompany.libronova.infra.util.CSVExporter] Starting book catalog export to: book_catalog_2025-10-14_15-50-19.csv
+[2025-10-14 15:50:19] [INFO] [com.mycompany.libronova.infra.util.CSVExporter] Book catalog exported successfully. Records: 2
+[2025-10-14 15:51:19] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Registering member: 178
+[2025-10-14 15:51:19] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member saved: 178
+[2025-10-14 15:51:25] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Updating member: 3
+[2025-10-14 15:51:25] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member updated: 3
+[2025-10-14 15:51:28] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member updated: 3
+[2025-10-14 15:51:28] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Member activated: 3
+[2025-10-14 15:51:33] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member updated: 3
+[2025-10-14 15:51:33] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Member deactivated: 3
+[2025-10-14 15:51:51] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Updating book: 3
+[2025-10-14 15:51:51] [INFO] [com.mycompany.libronova.repository.jdbc.BookRepositoryJDBC] Book updated: 3
+[2025-10-14 15:52:39] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Registering member: as
+[2025-10-14 15:52:39] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member saved: as
+[2025-10-14 15:52:51] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Updating member: 4
+[2025-10-14 15:52:51] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member updated: 4
+[2025-10-14 15:52:58] [INFO] [com.mycompany.libronova.service.impl.MemberServiceImpl] Updating member: 4
+[2025-10-14 15:52:58] [INFO] [com.mycompany.libronova.repository.jdbc.MemberRepositoryJDBC] Member updated: 4
+[2025-10-14 15:55:51] [SEVERE] [com.mycompany.libronova.service.impl.BookServiceImpl] Failed to register book: 1478. Error: Validations Errors: Total stock must be greater than 0
+[2025-10-14 15:56:00] [INFO] [com.mycompany.libronova.service.impl.BookServiceImpl] Registering book: 1478
+[2025-10-14 15:56:00] [SEVERE] [com.mycompany.libronova.service.impl.BookServiceImpl] Failed to register book: 1478. Error: The ISBN '1478' is already registered in the system
