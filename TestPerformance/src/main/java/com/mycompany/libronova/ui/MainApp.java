@@ -11,8 +11,6 @@ import com.mycompany.libronova.infra.config.ConnectionDB;
 import com.mycompany.libronova.repository.jdbc.*;
 import com.mycompany.libronova.service.*;
 import com.mycompany.libronova.service.impl.*;
-import java.awt.Button;
-import java.awt.Label;
 
 /**
  * Main JavaFX Application for LibroNova.
@@ -101,16 +99,25 @@ public class MainApp extends Application {
         subtitleLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
         
         // Menu buttons
-        Button btnLibros = createMenuButton("📚 Gestión de Libros");
-        btnLibros.setOnAction(e -> libroView.show(primaryStage));
+        Button btnLibros = createMenuButton("Gestión de Libros");
+        btnLibros.setOnAction(e -> {
+            primaryStage.hide();
+            libroView.show(primaryStage);
+        });
         
-        Button btnSocios = createMenuButton("👥 Gestión de Socios");
-        btnSocios.setOnAction(e -> socioView.show(primaryStage));
+        Button btnSocios = createMenuButton("Gestión de Socios");
+        btnSocios.setOnAction(e -> {
+            primaryStage.hide();
+            socioView.show(primaryStage);
+        });
         
-        Button btnPrestamos = createMenuButton("📖 Gestión de Préstamos");
-        btnPrestamos.setOnAction(e -> prestamoView.show(primaryStage));
+        Button btnPrestamos = createMenuButton("Gestión de Préstamos");
+        btnPrestamos.setOnAction(e -> {
+            primaryStage.hide();
+            prestamoView.show(primaryStage);
+        });
         
-        Button btnSalir = createMenuButton("❌ Salir");
+        Button btnSalir = createMenuButton("Salir");
         btnSalir.setStyle(btnSalir.getStyle() + "-fx-background-color: #e74c3c;");
         btnSalir.setOnAction(e -> primaryStage.close());
         
