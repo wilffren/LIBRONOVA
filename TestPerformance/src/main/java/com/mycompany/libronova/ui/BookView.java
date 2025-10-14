@@ -223,7 +223,10 @@ public class BookView {
         Button btnBack = new Button("Back to Main Menu");
         btnBack.setOnAction(e -> {
             stage.close();
-            parentStage.show();
+            // If parent stage exists and is not showing, show it
+            if (parentStage != null && !parentStage.isShowing()) {
+                parentStage.show();
+            }
         });
         
         bottomSection.getChildren().addAll(btnAdd, btnUpdate, btnDelete, btnClear, btnExportCSV, btnBack);

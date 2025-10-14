@@ -8,6 +8,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import com.mycompany.libronova.domain.SystemUser;
 import com.mycompany.libronova.service.AuthenticationService;
+import java.util.function.Consumer;
 
 /**
  * Login View for user authentication.
@@ -17,6 +18,7 @@ import com.mycompany.libronova.service.AuthenticationService;
 public class LoginView {
     
     private final AuthenticationService authService;
+    private final Consumer<SystemUser> onLoginSuccess;
     private Stage loginStage;
     private TextField usernameField;
     private PasswordField passwordField;
@@ -24,8 +26,9 @@ public class LoginView {
     private Button loginButton;
     private Button exitButton;
     
-    public LoginView(AuthenticationService authService) {
+    public LoginView(AuthenticationService authService, Consumer<SystemUser> onLoginSuccess) {
         this.authService = authService;
+        this.onLoginSuccess = onLoginSuccess;
     }
     
     /**
@@ -202,8 +205,11 @@ public class LoginView {
      */
     private void showMainApplication(SystemUser user) {
         try {
-            MainApp mainApp = new MainApp();
-            mainApp.showMainMenuWithUser(new Stage(), user);
+            if (onLoginSuccess != null) {
+                onLoginSuccess.accept(user);
+            } else {
+                showErrorAlert("Application Error", "No login success handler configured");
+            }
         } catch (Exception e) {
             showErrorAlert("Application Error", "Failed to start main application: " + e.getMessage());
         }

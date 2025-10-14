@@ -90,16 +90,44 @@ public class MainApp extends Application {
      * Initializes all views.
      */
     private void initializeViews() {
-        bookView = new BookView(bookService);
-        memberView = new MemberView(memberService);
-        loanView = new LoanView(loanService, bookService, memberService);
+        try {
+            LoggingConfig.logInfo(MainApp.class.getName(), "Initializing views...");
+            
+            if (bookService == null) {
+                throw new IllegalStateException("BookService is null");
+            }
+            if (memberService == null) {
+                throw new IllegalStateException("MemberService is null");
+            }
+            if (loanService == null) {
+                throw new IllegalStateException("LoanService is null");
+            }
+            
+            bookView = new BookView(bookService);
+            LoggingConfig.logInfo(MainApp.class.getName(), "BookView initialized");
+            
+            memberView = new MemberView(memberService);
+            LoggingConfig.logInfo(MainApp.class.getName(), "MemberView initialized");
+            
+            loanView = new LoanView(loanService, bookService, memberService);
+            LoggingConfig.logInfo(MainApp.class.getName(), "LoanView initialized");
+            
+            LoggingConfig.logInfo(MainApp.class.getName(), "All views initialized successfully");
+        } catch (Exception e) {
+            LoggingConfig.logError(MainApp.class.getName(), "Failed to initialize views", e);
+            throw e;
+        }
     }
 
     /**
      * Shows the login screen.
      */
     private void showLoginScreen() {
-        LoginView loginView = new LoginView(authService);
+        LoginView loginView = new LoginView(authService, (user) -> {
+            // Callback when login is successful
+            LoggingConfig.logInfo(MainApp.class.getName(), "Login successful for user: " + user.getUsername());
+            showMainMenuWithUser(primaryStage, user);
+        });
         loginView.show();
     }
     
@@ -145,20 +173,65 @@ public class MainApp extends Application {
         // Menu buttons
         Button btnBooks = createMenuButton("Book Management");
         btnBooks.setOnAction(e -> {
-            primaryStage.hide();
-            bookView.show(primaryStage);
+            try {
+                LoggingConfig.logInfo(MainApp.class.getName(), "Opening Book Management view");
+                
+                if (bookView == null) {
+                    LoggingConfig.logError(MainApp.class.getName(), "BookView is null, reinitializing views", null);
+                    initializeViews();
+                }
+                
+                Stage newStage = new Stage();
+                newStage.initOwner(primaryStage);
+                bookView.show(newStage);
+                
+                LoggingConfig.logInfo(MainApp.class.getName(), "Book Management view opened successfully");
+            } catch (Exception ex) {
+                LoggingConfig.logError(MainApp.class.getName(), "Error opening Book Management", ex);
+                showErrorAlert("Error", "Failed to open Book Management: " + ex.getMessage());
+            }
         });
 
         Button btnMembers = createMenuButton("Member Management");
         btnMembers.setOnAction(e -> {
-            primaryStage.hide();
-            memberView.show(primaryStage);
+            try {
+                LoggingConfig.logInfo(MainApp.class.getName(), "Opening Member Management view");
+                
+                if (memberView == null) {
+                    LoggingConfig.logError(MainApp.class.getName(), "MemberView is null, reinitializing views", null);
+                    initializeViews();
+                }
+                
+                Stage newStage = new Stage();
+                newStage.initOwner(primaryStage);
+                memberView.show(newStage);
+                
+                LoggingConfig.logInfo(MainApp.class.getName(), "Member Management view opened successfully");
+            } catch (Exception ex) {
+                LoggingConfig.logError(MainApp.class.getName(), "Error opening Member Management", ex);
+                showErrorAlert("Error", "Failed to open Member Management: " + ex.getMessage());
+            }
         });
 
         Button btnLoans = createMenuButton("Loan Management");
         btnLoans.setOnAction(e -> {
-            primaryStage.hide();
-            loanView.show(primaryStage);
+            try {
+                LoggingConfig.logInfo(MainApp.class.getName(), "Opening Loan Management view");
+                
+                if (loanView == null) {
+                    LoggingConfig.logError(MainApp.class.getName(), "LoanView is null, reinitializing views", null);
+                    initializeViews();
+                }
+                
+                Stage newStage = new Stage();
+                newStage.initOwner(primaryStage);
+                loanView.show(newStage);
+                
+                LoggingConfig.logInfo(MainApp.class.getName(), "Loan Management view opened successfully");
+            } catch (Exception ex) {
+                LoggingConfig.logError(MainApp.class.getName(), "Error opening Loan Management", ex);
+                showErrorAlert("Error", "Failed to open Loan Management: " + ex.getMessage());
+            }
         });
         
         Button btnReports = createMenuButton("Reports & Export");
