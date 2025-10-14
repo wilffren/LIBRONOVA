@@ -12,6 +12,7 @@ import com.mycompany.libronova.infra.config.LoggingConfig;
 import com.mycompany.libronova.repository.jdbc.*;
 import com.mycompany.libronova.service.*;
 import com.mycompany.libronova.service.impl.*;
+import com.mycompany.libronova.domain.SystemUser;
 import java.io.IOException;
 
 /**
@@ -22,12 +23,14 @@ import java.io.IOException;
 public class MainApp extends Application {
 
     private Stage primaryStage;
+    private SystemUser currentUser;
 
     // Services
     private BookService bookService;
     private MemberService memberService;
     private LoanService loanService;
     private ReportService reportService;
+    private AuthenticationService authService;
 
     // Views
     private BookView bookView;
@@ -56,13 +59,8 @@ public class MainApp extends Application {
         initializeServices();
         LoggingConfig.logInfo(MainApp.class.getName(), "Services initialized successfully");
         
-        // Initialize views
-        initializeViews();
-        LoggingConfig.logInfo(MainApp.class.getName(), "Views initialized successfully");
-        
-        // Show main menu
-        showMainMenu();
-        LoggingConfig.logInfo(MainApp.class.getName(), "LibroNova application started successfully");
+        // Show login screen first
+        showLoginScreen();
     }
 
     /**
@@ -85,6 +83,7 @@ public class MainApp extends Application {
         memberService = new MemberServiceImpl(memberRepo);
         loanService = new LoanServiceImpl(loanRepo, bookRepo, memberRepo);
         reportService = new ReportServiceImpl(bookService, loanService);
+        authService = new AuthenticationServiceImpl();
     }
 
     /**
@@ -96,6 +95,30 @@ public class MainApp extends Application {
         loanView = new LoanView(loanService, bookService, memberService);
     }
 
+    /**
+     * Shows the login screen.
+     */
+    private void showLoginScreen() {
+        LoginView loginView = new LoginView(authService);
+        loginView.show();
+    }
+    
+    /**
+     * Shows the main menu with authenticated user.
+     */
+    public void showMainMenuWithUser(Stage stage, SystemUser user) {
+        this.primaryStage = stage;
+        this.currentUser = user;
+        
+        // Initialize views after authentication
+        initializeViews();
+        LoggingConfig.logInfo(MainApp.class.getName(), "Views initialized for user: " + user.getUsername());
+        
+        // Show main menu
+        showMainMenu();
+        LoggingConfig.logInfo(MainApp.class.getName(), "LibroNova application started successfully for user: " + user.getUsername());
+    }
+    
     /**
      * Shows the main menu.
      */
@@ -111,6 +134,13 @@ public class MainApp extends Application {
 
         Label subtitleLabel = new Label("Library Management System");
         subtitleLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
+        
+        // User info
+        String userInfo = currentUser != null ? 
+            "Logged in as: " + currentUser.getName() + " (" + currentUser.getRole() + ")" : 
+            "No user logged in";
+        Label userLabel = new Label(userInfo);
+        userLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #3498db; -fx-font-weight: bold;");
 
         // Menu buttons
         Button btnBooks = createMenuButton("Book Management");
@@ -134,6 +164,27 @@ public class MainApp extends Application {
         Button btnReports = createMenuButton("Reports & Export");
         btnReports.setOnAction(e -> showReportsMenu());
         
+        // User Management button (only for admins)
+        Button btnUserMgmt = createMenuButton("User Management");
+        btnUserMgmt.setOnAction(e -> showUserManagementDemo());
+        // Enable only for admin users
+        if (currentUser == null || !currentUser.isAdmin()) {
+            btnUserMgmt.setDisable(true);
+            btnUserMgmt.setStyle(btnUserMgmt.getStyle() + "-fx-background-color: #bdc3c7;");
+        }
+        
+        Button btnLogout = createMenuButton("Logout");
+        btnLogout.setStyle(
+                "-fx-background-color: #f39c12;"
+                + "-fx-text-fill: white;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 4;"
+                + "-fx-border-color: transparent;"
+                + "-fx-cursor: hand;"
+                + "-fx-effect: none;"
+        );
+        btnLogout.setOnAction(e -> handleLogout());
+        
         Button btnExit = createMenuButton("Exit");
         btnExit.setStyle(
                 "-fx-background-color: #e74c3c;"
@@ -147,10 +198,10 @@ public class MainApp extends Application {
         btnExit.setOnAction(e -> primaryStage.close());
 
         // Layout
-        VBox titleBox = new VBox(5, titleLabel, subtitleLabel);
+        VBox titleBox = new VBox(5, titleLabel, subtitleLabel, userLabel);
         titleBox.setAlignment(Pos.CENTER);
 
-        VBox buttonBox = new VBox(15, btnBooks, btnMembers, btnLoans, btnReports, btnExit);
+        VBox buttonBox = new VBox(15, btnBooks, btnMembers, btnLoans, btnReports, btnUserMgmt, btnLogout, btnExit);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(20, 0, 0, 0));
 
@@ -242,6 +293,127 @@ public class MainApp extends Application {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    
+    /**
+     * Handles user logout.
+     */
+    private void handleLogout() {
+        if (authService != null && currentUser != null) {
+            authService.logout();
+            LoggingConfig.logInfo(MainApp.class.getName(), "User logged out: " + currentUser.getUsername());
+        }
+        
+        currentUser = null;
+        primaryStage.close();
+        
+        // Restart application with login screen
+        showLoginScreen();
+    }
+    
+    /**
+     * Shows user management demonstration.
+     * Demonstrates the decorator pattern and HTTP logging.
+     */
+    private void showUserManagementDemo() {
+        if (currentUser == null || !currentUser.isAdmin()) {
+            showErrorAlert("Access Denied", "Only administrators can access user management.");
+            return;
+        }
+        
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+        dialog.setTitle("User Management Demo");
+        dialog.setHeaderText("Demonstrate User Management Features");
+        dialog.setContentText("Choose an operation to demonstrate:");
+        
+        ButtonType btnCreateUser = new ButtonType("Create User (Decorator)");
+        ButtonType btnListUsers = new ButtonType("List All Users");
+        ButtonType btnUpdateStatus = new ButtonType("Update User Status");
+        ButtonType btnCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        
+        dialog.getButtonTypes().setAll(btnCreateUser, btnListUsers, btnUpdateStatus, btnCancel);
+        
+        dialog.showAndWait().ifPresent(response -> {
+            try {
+                if (response == btnCreateUser) {
+                    demonstrateUserCreation();
+                } else if (response == btnListUsers) {
+                    demonstrateListUsers();
+                } else if (response == btnUpdateStatus) {
+                    demonstrateUpdateUserStatus();
+                }
+            } catch (Exception e) {
+                LoggingConfig.logError(MainApp.class.getName(), "User management demo failed", e);
+                showErrorAlert("Demo Failed", "Error during demonstration: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Demonstrates user creation with decorator pattern.
+     */
+    private void demonstrateUserCreation() {
+        // Create a new user using the decorator pattern
+        SystemUser newUser = authService.createWithDefaults(
+            "Demo Assistant", 
+            "demo@libronova.com", 
+            "demo_user_" + System.currentTimeMillis(), 
+            "password123"
+        );
+        
+        if (newUser != null) {
+            showInfoAlert("User Created", 
+                "User created successfully with decorator defaults:\n" +
+                "Name: " + newUser.getName() + "\n" +
+                "Role: " + newUser.getRole() + " (default)\n" +
+                "Status: " + newUser.getStatus() + " (default)\n" +
+                "Created At: " + newUser.getCreatedAt() + " (default)\n\n" +
+                "Check console for HTTP simulation logs!");
+        } else {
+            showErrorAlert("Creation Failed", "Failed to create user. Check console for details.");
+        }
+    }
+    
+    /**
+     * Demonstrates listing all users.
+     */
+    private void demonstrateListUsers() {
+        if (authService instanceof AuthenticationServiceImpl) {
+            AuthenticationServiceImpl authImpl = (AuthenticationServiceImpl) authService;
+            var users = authImpl.getAllUsers();
+            
+            StringBuilder userList = new StringBuilder("System Users (" + users.size() + " total):\n\n");
+            users.values().forEach(user -> {
+                userList.append("• ").append(user.getName())
+                        .append(" (@").append(user.getUsername()).append(")")
+                        .append(" - ").append(user.getRole())
+                        .append(" - ").append(user.getStatus())
+                        .append("\n");
+            });
+            
+            userList.append("\nCheck console for HTTP simulation logs!");
+            showInfoAlert("All Users", userList.toString());
+        }
+    }
+    
+    /**
+     * Demonstrates updating user status.
+     */
+    private void demonstrateUpdateUserStatus() {
+        // Update assistant user status as example
+        SystemUser updatedUser = authService.updateUserStatus("assistant", 
+            authService.getUserByUsername("assistant").getStatus() == com.mycompany.libronova.domain.UserStatus.ACTIVE ? 
+            com.mycompany.libronova.domain.UserStatus.INACTIVE : com.mycompany.libronova.domain.UserStatus.ACTIVE);
+        
+        if (updatedUser != null) {
+            showInfoAlert("Status Updated", 
+                "User status updated successfully:\n" +
+                "User: " + updatedUser.getName() + "\n" +
+                "New Status: " + updatedUser.getStatus() + "\n\n" +
+                "Check console for HTTP simulation logs!");
+        } else {
+            showErrorAlert("Update Failed", "Failed to update user status.");
+        }
     }
 
     public static void main(String[] args) {

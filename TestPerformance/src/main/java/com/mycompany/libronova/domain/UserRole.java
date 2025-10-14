@@ -5,6 +5,7 @@ package com.mycompany.libronova.domain;
  */
 public enum UserRole {
     ADMIN,
+    ASSISTANT,
     LIBRARIAN,
     MEMBER
 }
