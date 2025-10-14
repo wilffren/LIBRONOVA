@@ -510,10 +510,10 @@ Status: 201 Created
 ========================================
 
 # Authentication logs:
-[AUTH] 2024-10-14 17:22:59 - Authentication attempt for user 'admin': SUCCESS
+[AUTH] 2025-10-14 17:22:59 - Authentication attempt for user 'admin': SUCCESS
 
 # Session management:
-[SESSION] 2024-10-14 17:22:59 - User 'admin': LOGIN
+[SESSION] 2025-10-14 17:22:59 - User 'admin': LOGIN
 ```
 
 #### Error Levels
@@ -563,8 +563,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Wilffren Muñoz**
-- GitHub: [@your-username](https://github.com/your-username)
-- Email: your.email@example.com
+- GitHub: (https://github.com/wilffren)
+- Email: wilffren14@gmail.com
 
 ## 🆘 Support
 
@@ -575,7 +575,7 @@ For support and questions:
 
 ## 🔄 Version History
 
-- **v1.1.1** (2024-10-14): Bug Fixes & Navigation Improvements
+- **v1.1.1** (2025-10-14): Bug Fixes & Navigation Improvements
   - 🐛 **FIXED**: Application no longer closes unexpectedly after login
   - 🐛 **FIXED**: Main menu now displays correctly after successful authentication
   - 🔧 **IMPROVED**: Enhanced window management with independent stages for each view
@@ -584,7 +584,7 @@ For support and questions:
   - ⚡ **PERFORMANCE**: Optimized view initialization and stage management
   - 🔒 **STABILITY**: Added null checks and auto-recovery for view components
 
-- **v1.1.0** (2024-10-14): Authentication & User Management Update
+- **v1.1.0** (2025-10-14): Authentication & User Management Update
   - ✨ **NEW**: User authentication system with role-based access control
   - ✨ **NEW**: Admin and Assistant user roles with different permissions
   - ✨ **NEW**: HTTP request simulation logging (GET/POST/PATCH/DELETE)
@@ -595,7 +595,7 @@ For support and questions:
   - ⬆️ **UPDATED**: Enhanced main application with authentication flow
   - 🔐 **SECURITY**: Default credentials: admin/admin123, assistant/assistant123
 
-- **v1.0.0** (2024-10-14): Initial release
+- **v1.0.0** (2025-10-14): Initial release
   - Complete book, member, and loan management
   - JavaFX user interface
   - MySQL database integration
@@ -624,8 +624,11 @@ Streamlined loan creation and return processing with fine calculation and overdu
 ---
 
 Name: Wilffren E. Muñoz V.
+
 Clan: Cienaga Java.
+
 Email: wilffren14@gmail.com
+
 Document: CC
 
-**Made with ❤️ for library management**
+
