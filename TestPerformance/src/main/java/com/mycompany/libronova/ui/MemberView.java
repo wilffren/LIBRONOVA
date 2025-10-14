@@ -145,6 +145,16 @@ public class MemberView {
         txtName = new TextField();
         txtEmail = new TextField();
         txtMemberNumber = new TextField();
+        txtMemberNumber.setPromptText("Enter numeric member number only");
+        
+        // Add real-time validation for member number
+        txtMemberNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty() && !newValue.matches("\\d*")) {
+                // Remove non-numeric characters
+                txtMemberNumber.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        
         cboStatus = new ComboBox<>();
         cboStatus.setItems(FXCollections.observableArrayList(MemberStatus.values()));
         cboStatus.setValue(MemberStatus.ACTIVE);
@@ -216,6 +226,10 @@ public class MemberView {
             loadMembers();
             clearForm();
             showInfo("Success", "Member added successfully!");
+        } catch (InvalidMemberNumberException e) {
+            showError("Invalid Member Number", e.getMessage() + "\n\nPlease enter only numeric characters for the member number.");
+            txtMemberNumber.requestFocus();
+            txtMemberNumber.selectAll();
         } catch (Exception e) {
             showError("Error", "Failed to add member: " + e.getMessage());
         }
@@ -235,6 +249,10 @@ public class MemberView {
             loadMembers();
             clearForm();
             showInfo("Success", "Member updated successfully!");
+        } catch (InvalidMemberNumberException e) {
+            showError("Invalid Member Number", e.getMessage() + "\n\nPlease enter only numeric characters for the member number.");
+            txtMemberNumber.requestFocus();
+            txtMemberNumber.selectAll();
         } catch (Exception e) {
             showError("Error", "Failed to update member: " + e.getMessage());
         }
@@ -280,11 +298,18 @@ public class MemberView {
         }
     }
     
-    private Member createMemberFromForm() {
+    private Member createMemberFromForm() throws InvalidMemberNumberException {
+        String memberNumber = txtMemberNumber.getText().trim();
+        
+        // Validate member number - must be numeric only
+        if (!memberNumber.isEmpty() && !memberNumber.matches("\\d+")) {
+            throw new InvalidMemberNumberException(memberNumber);
+        }
+        
         Member member = new Member(
             txtName.getText().trim(),
             txtEmail.getText().trim(),
-            txtMemberNumber.getText().trim()
+            memberNumber
         );
         member.setStatus(cboStatus.getValue());
         member.setRegistrationDate(dpRegistrationDate.getValue());
