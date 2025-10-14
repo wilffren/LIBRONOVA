@@ -55,6 +55,9 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+nbactions.xml
+nb-configuration.xml
+nb-run.sh
 
 # Application specific
 dependency-reduced-pom.xml
