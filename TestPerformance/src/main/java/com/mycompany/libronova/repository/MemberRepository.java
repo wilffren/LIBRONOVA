@@ -1,34 +1,34 @@
 package com.mycompany.libronova.repository;
 
-import com.mycompany.libronova.domain.Socio;
+import com.mycompany.libronova.domain.Member;
 import com.mycompany.libronova.exceptions.DatabaseException;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for Socio entity operations.
+ * Repository interface for Member entity operations.
  * 
  * @author Wilffren Muñoz
  */
-public interface SocioRepository {
+public interface MemberRepository {
     
     /**
      * Saves a new member to the database.
      * 
-     * @param socio the member to save
+     * @param member the member to save
      * @return the saved member with generated ID
      * @throws DatabaseException if database operation fails
      */
-    Socio save(Socio socio) throws DatabaseException;
+    Member save(Member member) throws DatabaseException;
     
     /**
      * Updates an existing member.
      * 
-     * @param socio the member to update
+     * @param member the member to update
      * @return the updated member
      * @throws DatabaseException if database operation fails
      */
-    Socio update(Socio socio) throws DatabaseException;
+    Member update(Member member) throws DatabaseException;
     
     /**
      * Finds a member by ID.
@@ -37,16 +37,16 @@ public interface SocioRepository {
      * @return an Optional containing the member if found
      * @throws DatabaseException if database operation fails
      */
-    Optional<Socio> findById(Long id) throws DatabaseException;
+    Optional<Member> findById(Long id) throws DatabaseException;
     
     /**
      * Finds a member by member number.
      * 
-     * @param numeroSocio the member number
+     * @param memberNumber the member number
      * @return an Optional containing the member if found
      * @throws DatabaseException if database operation fails
      */
-    Optional<Socio> findByNumeroSocio(String numeroSocio) throws DatabaseException;
+    Optional<Member> findByMemberNumber(String memberNumber) throws DatabaseException;
     
     /**
      * Finds a member by email.
@@ -55,7 +55,7 @@ public interface SocioRepository {
      * @return an Optional containing the member if found
      * @throws DatabaseException if database operation fails
      */
-    Optional<Socio> findByEmail(String email) throws DatabaseException;
+    Optional<Member> findByEmail(String email) throws DatabaseException;
     
     /**
      * Retrieves all members from the database.
@@ -63,7 +63,7 @@ public interface SocioRepository {
      * @return list of all members
      * @throws DatabaseException if database operation fails
      */
-    List<Socio> findAll() throws DatabaseException;
+    List<Member> findAll() throws DatabaseException;
     
     /**
      * Retrieves all active members.
@@ -71,7 +71,7 @@ public interface SocioRepository {
      * @return list of active members
      * @throws DatabaseException if database operation fails
      */
-    List<Socio> findAllActivos() throws DatabaseException;
+    List<Member> findAllActive() throws DatabaseException;
     
     /**
      * Deletes a member by ID.

@@ -7,41 +7,41 @@ import java.util.Objects;
  * 
  * @author Wilffren Muñoz
  */
-public abstract class Usuario {
+public abstract class User {
     
     protected Long id;
-    protected String nombre;
+    protected String name;
     protected String email;
-    protected RolUsuario rol;
+    protected UserRole role;
     
-    protected Usuario() {
+    protected User() {
     }
     
-    protected Usuario(String nombre, String email, RolUsuario rol) {
-        this.nombre = nombre;
+    protected User(String name, String email, UserRole role) {
+        this.name = name;
         this.email = email;
-        this.rol = rol;
+        this.role = role;
     }
     
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     
-    public RolUsuario getRol() { return rol; }
-    public void setRol(RolUsuario rol) { this.rol = rol; }
+    public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
     
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Usuario usuario = (Usuario) o;
-        return Objects.equals(email, usuario.email);
+        User user = (User) o;
+        return Objects.equals(email, user.email);
     }
     
     @Override

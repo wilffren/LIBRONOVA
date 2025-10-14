@@ -5,12 +5,12 @@ package com.mycompany.libronova.exceptions;
  * 
  * @author Wilffren Muñoz
  */
-public class ISBNDuplicadoException extends LibroNovaException {
+public class DuplicateISBNException extends LibroNovaException {
     
     private final String isbn;
     
-    public ISBNDuplicadoException(String isbn) {
-        super(String.format("El ISBN '%s' ya está registrado en el sistema", isbn));
+    public DuplicateISBNException(String isbn) {
+        super(String.format("The ISBN '%s' is already registered in the system", isbn));
         this.isbn = isbn;
     }
     

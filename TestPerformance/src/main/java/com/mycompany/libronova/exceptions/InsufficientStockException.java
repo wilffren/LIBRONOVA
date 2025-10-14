@@ -5,23 +5,23 @@ package com.mycompany.libronova.exceptions;
  * 
  * @author Wilffren Muñoz
  */
-public class StockInsuficienteException extends LibroNovaException {
+public class InsufficientStockException extends LibroNovaException {
     
     private final String isbn;
-    private final int stockDisponible;
+    private final int availableStock;
     
-    public StockInsuficienteException(String isbn, int stockDisponible) {
+    public InsufficientStockException(String isbn, int availableStock) {
         super(String.format("Insufficient stock for the book with ISBN '%s'. Available: %d", 
-                isbn, stockDisponible));
+                isbn, availableStock));
         this.isbn = isbn;
-        this.stockDisponible = stockDisponible;
+        this.availableStock = availableStock;
     }
     
     public String getIsbn() {
         return isbn;
     }
     
-    public int getStockDisponible() {
-        return stockDisponible;
+    public int getAvailableStock() {
+        return availableStock;
     }
 }

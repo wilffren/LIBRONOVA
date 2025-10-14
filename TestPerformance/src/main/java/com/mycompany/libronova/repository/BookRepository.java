@@ -1,36 +1,36 @@
 package com.mycompany.libronova.repository;
 
-import com.mycompany.libronova.domain.Libro;
+import com.mycompany.libronova.domain.Book;
 import com.mycompany.libronova.exceptions.DatabaseException;
-import com.mycompany.libronova.exceptions.ISBNDuplicadoException;
+import com.mycompany.libronova.exceptions.DuplicateISBNException;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for Libro entity operations.
+ * Repository interface for Book entity operations.
  * 
  * @author Wilffren Muñoz
  */
-public interface LibroRepository {
+public interface BookRepository {
     
     /**
      * Saves a new book to the database.
      * 
-     * @param libro the book to save
+     * @param book the book to save
      * @return the saved book with generated ID
-     * @throws ISBNDuplicadoException if ISBN already exists
+     * @throws DuplicateISBNException if ISBN already exists
      * @throws DatabaseException if database operation fails
      */
-    Libro save(Libro libro) throws ISBNDuplicadoException, DatabaseException;
+    Book save(Book book) throws DuplicateISBNException, DatabaseException;
     
     /**
      * Updates an existing book.
      * 
-     * @param libro the book to update
+     * @param book the book to update
      * @return the updated book
      * @throws DatabaseException if database operation fails
      */
-    Libro update(Libro libro) throws DatabaseException;
+    Book update(Book book) throws DatabaseException;
     
     /**
      * Finds a book by its ID.
@@ -39,7 +39,7 @@ public interface LibroRepository {
      * @return an Optional containing the book if found
      * @throws DatabaseException if database operation fails
      */
-    Optional<Libro> findById(Long id) throws DatabaseException;
+    Optional<Book> findById(Long id) throws DatabaseException;
     
     /**
      * Finds a book by its ISBN.
@@ -48,7 +48,7 @@ public interface LibroRepository {
      * @return an Optional containing the book if found
      * @throws DatabaseException if database operation fails
      */
-    Optional<Libro> findByIsbn(String isbn) throws DatabaseException;
+    Optional<Book> findByIsbn(String isbn) throws DatabaseException;
     
     /**
      * Retrieves all books from the database.
@@ -56,16 +56,16 @@ public interface LibroRepository {
      * @return list of all books
      * @throws DatabaseException if database operation fails
      */
-    List<Libro> findAll() throws DatabaseException;
+    List<Book> findAll() throws DatabaseException;
     
     /**
      * Searches books by title (partial match).
      * 
-     * @param titulo the title to search
+     * @param title the title to search
      * @return list of matching books
      * @throws DatabaseException if database operation fails
      */
-    List<Libro> findByTitulo(String titulo) throws DatabaseException;
+    List<Book> findByTitle(String title) throws DatabaseException;
     
     /**
      * Deletes a book by its ID.

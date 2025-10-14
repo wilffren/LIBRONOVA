@@ -1,6 +1,6 @@
 package com.mycompany.libronova.service;
 
-import com.mycompany.libronova.domain.Prestamo;
+import com.mycompany.libronova.domain.Loan;
 import com.mycompany.libronova.exceptions.*;
 import java.util.List;
 
@@ -9,35 +9,35 @@ import java.util.List;
  * 
  * @author Wilffren Muñoz
  */
-public interface PrestamoService {
+public interface LoanService {
     
     /**
      * Creates a new loan with transaction support.
      * Validates member status and book availability.
      * Decrements book stock.
      * 
-     * @param libroId the book ID
-     * @param socioId the member ID
-     * @param diasPrestamo number of days for the loan
+     * @param bookId the book ID
+     * @param memberId the member ID
+     * @param loanDays number of days for the loan
      * @return the created loan
      * @throws EntityNotFoundException if book or member not found
-     * @throws SocioInactivoException if member is not active
-     * @throws StockInsuficienteException if book is not available
+     * @throws InactiveMemberException if member is not active
+     * @throws InsufficientStockException if book is not available
      * @throws DatabaseException if database operation fails
      */
-    Prestamo crearPrestamo(Long libroId, Long socioId, int diasPrestamo) 
-            throws EntityNotFoundException, SocioInactivoException, StockInsuficienteException, DatabaseException;
+    Loan createLoan(Long bookId, Long memberId, int loanDays) 
+            throws EntityNotFoundException, InactiveMemberException, InsufficientStockException, DatabaseException;
     
     /**
      * Processes a book return with transaction support.
      * Updates loan status and increments book stock.
      * 
-     * @param prestamoId the loan ID
+     * @param loanId the loan ID
      * @return the updated loan
      * @throws EntityNotFoundException if loan not found
      * @throws DatabaseException if database operation fails
      */
-    Prestamo devolverLibro(Long prestamoId) throws EntityNotFoundException, DatabaseException;
+    Loan returnBook(Long loanId) throws EntityNotFoundException, DatabaseException;
     
     /**
      * Finds a loan by ID.
@@ -47,7 +47,7 @@ public interface PrestamoService {
      * @throws EntityNotFoundException if loan not found
      * @throws DatabaseException if database operation fails
      */
-    Prestamo buscarPrestamoPorId(Long id) throws EntityNotFoundException, DatabaseException;
+    Loan findLoanById(Long id) throws EntityNotFoundException, DatabaseException;
     
     /**
      * Lists all loans.
@@ -55,16 +55,16 @@ public interface PrestamoService {
      * @return list of all loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> listarTodosPrestamos() throws DatabaseException;
+    List<Loan> listAllLoans() throws DatabaseException;
     
     /**
      * Lists all active loans for a member.
      * 
-     * @param socioId the member ID
+     * @param memberId the member ID
      * @return list of active loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> listarPrestamosActivosPorSocio(Long socioId) throws DatabaseException;
+    List<Loan> listActiveLoansByMember(Long memberId) throws DatabaseException;
     
     /**
      * Lists all overdue loans.
@@ -72,15 +72,15 @@ public interface PrestamoService {
      * @return list of overdue loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> listarPrestamosVencidos() throws DatabaseException;
+    List<Loan> listOverdueLoans() throws DatabaseException;
     
     /**
      * Calculates fine for an overdue loan.
      * 
-     * @param prestamoId the loan ID
+     * @param loanId the loan ID
      * @return fine amount
      * @throws EntityNotFoundException if loan not found
      * @throws DatabaseException if database operation fails
      */
-    double calcularMulta(Long prestamoId) throws EntityNotFoundException, DatabaseException;
+    double calculateFine(Long loanId) throws EntityNotFoundException, DatabaseException;
 }

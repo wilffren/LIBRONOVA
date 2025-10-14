@@ -8,50 +8,61 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import com.mycompany.libronova.infra.config.ConnectionDB;
+import com.mycompany.libronova.infra.config.LoggingConfig;
 import com.mycompany.libronova.repository.jdbc.*;
 import com.mycompany.libronova.service.*;
 import com.mycompany.libronova.service.impl.*;
 
 /**
  * Main JavaFX Application for LibroNova.
- * 
+ *
  * @author Wilffren Muñoz
  */
 public class MainApp extends Application {
-    
+
     private Stage primaryStage;
-    
+
     // Services
-    private LibroService libroService;
-    private SocioService socioService;
-    private PrestamoService prestamoService;
-    
+    private BookService bookService;
+    private MemberService memberService;
+    private LoanService loanService;
+
     // Views
-    private LibroView libroView;
-    private SocioView socioView;
-    private PrestamoView prestamoView;
-    
+    private BookView bookView;
+    private MemberView memberView;
+    private LoanView loanView;
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         
+        // Initialize logging system
+        LoggingConfig.initialize();
+        LoggingConfig.logInfo(MainApp.class.getName(), "LibroNova application starting...");
+        
         // Test database connection
         if (!testDatabaseConnection()) {
-            showErrorAlert("Error de Conexión", 
-                    "No se pudo conectar a la base de datos. Verifique la configuración.");
+            LoggingConfig.logError(MainApp.class.getName(), "Failed to connect to database", null);
+            showErrorAlert("Connection Error", 
+                    "Could not connect to the database. Please check the configuration.");
             return;
         }
         
+        LoggingConfig.logInfo(MainApp.class.getName(), "Database connection established successfully");
+        
         // Initialize services
         initializeServices();
+        LoggingConfig.logInfo(MainApp.class.getName(), "Services initialized successfully");
         
         // Initialize views
         initializeViews();
+        LoggingConfig.logInfo(MainApp.class.getName(), "Views initialized successfully");
         
         // Show main menu
         showMainMenu();
+        LoggingConfig.logInfo(MainApp.class.getName(), "LibroNova application started successfully");
     }
-    
+
     /**
      * Tests database connection.
      */
@@ -59,29 +70,29 @@ public class MainApp extends Application {
         ConnectionDB connectionDB = ConnectionDB.getInstance();
         return connectionDB.testConnection();
     }
-    
+
     /**
      * Initializes all services.
      */
     private void initializeServices() {
-        LibroRepositoryJDBC libroRepo = new LibroRepositoryJDBC();
-        SocioRepositoryJDBC socioRepo = new SocioRepositoryJDBC();
-        PrestamoRepositoryJDBC prestamoRepo = new PrestamoRepositoryJDBC();
-        
-        libroService = new LibroServiceImpl(libroRepo);
-        socioService = new SocioServiceImpl(socioRepo);
-        prestamoService = new PrestamoServiceImpl(prestamoRepo, libroRepo, socioRepo);
+        BookRepositoryJDBC bookRepo = new BookRepositoryJDBC();
+        MemberRepositoryJDBC memberRepo = new MemberRepositoryJDBC();
+        LoanRepositoryJDBC loanRepo = new LoanRepositoryJDBC();
+
+        bookService = new BookServiceImpl(bookRepo);
+        memberService = new MemberServiceImpl(memberRepo);
+        loanService = new LoanServiceImpl(loanRepo, bookRepo, memberRepo);
     }
-    
+
     /**
      * Initializes all views.
      */
     private void initializeViews() {
-        libroView = new LibroView(libroService);
-        socioView = new SocioView(socioService);
-        prestamoView = new PrestamoView(prestamoService, libroService, socioService);
+        bookView = new BookView(bookService);
+        memberView = new MemberView(memberService);
+        loanView = new LoanView(loanService, bookService, memberService);
     }
-    
+
     /**
      * Shows the main menu.
      */
@@ -90,53 +101,61 @@ public class MainApp extends Application {
         root.setPadding(new Insets(30));
         root.setAlignment(Pos.CENTER);
         root.setStyle("-fx-background-color: #f5f5f5;");
-        
+
         // Title
         Label titleLabel = new Label("LibroNova");
         titleLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
-        
-        Label subtitleLabel = new Label("Sistema de Gestión de Bibliotecas");
+
+        Label subtitleLabel = new Label("Library Management System");
         subtitleLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
-        
+
         // Menu buttons
-        Button btnLibros = createMenuButton("Gestión de Libros");
-        btnLibros.setOnAction(e -> {
+        Button btnBooks = createMenuButton("Book Management");
+        btnBooks.setOnAction(e -> {
             primaryStage.hide();
-            libroView.show(primaryStage);
+            bookView.show(primaryStage);
         });
-        
-        Button btnSocios = createMenuButton("Gestión de Socios");
-        btnSocios.setOnAction(e -> {
+
+        Button btnMembers = createMenuButton("Member Management");
+        btnMembers.setOnAction(e -> {
             primaryStage.hide();
-            socioView.show(primaryStage);
+            memberView.show(primaryStage);
         });
-        
-        Button btnPrestamos = createMenuButton("Gestión de Préstamos");
-        btnPrestamos.setOnAction(e -> {
+
+        Button btnLoans = createMenuButton("Loan Management");
+        btnLoans.setOnAction(e -> {
             primaryStage.hide();
-            prestamoView.show(primaryStage);
+            loanView.show(primaryStage);
         });
-        
-        Button btnSalir = createMenuButton("Salir");
-        btnSalir.setStyle(btnSalir.getStyle() + "-fx-background-color: #e74c3c;");
-        btnSalir.setOnAction(e -> primaryStage.close());
-        
+
+        Button btnExit = new Button("Exit");
+        btnExit.setStyle(
+                "-fx-background-color: #e74c3c;"
+                + "-fx-text-fill: white;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 4;"
+                + "-fx-border-color: transparent;"
+                + "-fx-cursor: hand;"
+                + "-fx-effect: none;"
+        );
+        btnExit.setOnAction(e -> primaryStage.close());
+
         // Layout
         VBox titleBox = new VBox(5, titleLabel, subtitleLabel);
         titleBox.setAlignment(Pos.CENTER);
-        
-        VBox buttonBox = new VBox(15, btnLibros, btnSocios, btnPrestamos, btnSalir);
+
+        VBox buttonBox = new VBox(15, btnBooks, btnMembers, btnLoans, btnExit);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(20, 0, 0, 0));
-        
+
         root.getChildren().addAll(titleBox, buttonBox);
-        
+
         Scene scene = new Scene(root, 600, 500);
-        primaryStage.setTitle("LibroNova - Sistema de Gestión de Bibliotecas");
+        primaryStage.setTitle("LibroNova - Library Management System");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
     /**
      * Creates a styled menu button.
      */
@@ -145,25 +164,25 @@ public class MainApp extends Application {
         button.setPrefWidth(350);
         button.setPrefHeight(50);
         button.setStyle(
-            "-fx-font-size: 16px; " +
-            "-fx-background-color: #3498db; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 5; " +
-            "-fx-cursor: hand;"
+                "-fx-font-size: 16px; "
+                + "-fx-background-color: #3498db; "
+                + "-fx-text-fill: white; "
+                + "-fx-background-radius: 5; "
+                + "-fx-cursor: hand;"
         );
-        
-        button.setOnMouseEntered(e -> 
-            button.setStyle(button.getStyle() + "-fx-background-color: #2980b9;")
+
+        button.setOnMouseEntered(e
+                -> button.setStyle(button.getStyle() + "-fx-background-color: #2980b9;")
         );
-        
-        button.setOnMouseExited(e -> 
-            button.setStyle(button.getStyle().replace("-fx-background-color: #2980b9;", 
-                    "-fx-background-color: #3498db;"))
+
+        button.setOnMouseExited(e
+                -> button.setStyle(button.getStyle().replace("-fx-background-color: #2980b9;",
+                        "-fx-background-color: #3498db;"))
         );
-        
+
         return button;
     }
-    
+
     /**
      * Shows an error alert.
      */
@@ -174,7 +193,7 @@ public class MainApp extends Application {
         alert.setContentText(content);
         alert.showAndWait();
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }

@@ -3,8 +3,8 @@ package com.mycompany.libronova.domain;
 /**
  * Enum representing user roles in the system.
  */
-public enum RolUsuario {
+public enum UserRole {
     ADMIN,
-    BIBLIOTECARIO,
-    SOCIO
+    LIBRARIAN,
+    MEMBER
 }

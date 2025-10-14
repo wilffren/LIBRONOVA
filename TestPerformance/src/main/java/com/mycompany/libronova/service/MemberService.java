@@ -1,6 +1,6 @@
 package com.mycompany.libronova.service;
 
-import com.mycompany.libronova.domain.Socio;
+import com.mycompany.libronova.domain.Member;
 import com.mycompany.libronova.exceptions.*;
 import java.util.List;
 
@@ -9,28 +9,28 @@ import java.util.List;
  * 
  * @author Wilffren Muñoz
  */
-public interface SocioService {
+public interface MemberService {
     
     /**
      * Registers a new member in the system.
      * 
-     * @param socio the member to register
+     * @param member the member to register
      * @return the registered member
      * @throws ValidationException if validation fails
      * @throws DatabaseException if database operation fails
      */
-    Socio registrarSocio(Socio socio) throws ValidationException, DatabaseException;
+    Member registerMember(Member member) throws ValidationException, DatabaseException;
     
     /**
      * Updates an existing member.
      * 
-     * @param socio the member to update
+     * @param member the member to update
      * @return the updated member
      * @throws EntityNotFoundException if member not found
      * @throws ValidationException if validation fails
      * @throws DatabaseException if database operation fails
      */
-    Socio actualizarSocio(Socio socio) throws EntityNotFoundException, ValidationException, DatabaseException;
+    Member updateMember(Member member) throws EntityNotFoundException, ValidationException, DatabaseException;
     
     /**
      * Finds a member by ID.
@@ -40,17 +40,17 @@ public interface SocioService {
      * @throws EntityNotFoundException if member not found
      * @throws DatabaseException if database operation fails
      */
-    Socio buscarSocioPorId(Long id) throws EntityNotFoundException, DatabaseException;
+    Member findMemberById(Long id) throws EntityNotFoundException, DatabaseException;
     
     /**
      * Finds a member by member number.
      * 
-     * @param numeroSocio the member number
+     * @param memberNumber the member number
      * @return the member
      * @throws EntityNotFoundException if member not found
      * @throws DatabaseException if database operation fails
      */
-    Socio buscarSocioPorNumero(String numeroSocio) throws EntityNotFoundException, DatabaseException;
+    Member findMemberByNumber(String memberNumber) throws EntityNotFoundException, DatabaseException;
     
     /**
      * Lists all members.
@@ -58,7 +58,7 @@ public interface SocioService {
      * @return list of all members
      * @throws DatabaseException if database operation fails
      */
-    List<Socio> listarTodosLosSocios() throws DatabaseException;
+    List<Member> listAllMembers() throws DatabaseException;
     
     /**
      * Lists all active members.
@@ -66,7 +66,7 @@ public interface SocioService {
      * @return list of active members
      * @throws DatabaseException if database operation fails
      */
-    List<Socio> listarSociosActivos() throws DatabaseException;
+    List<Member> listActiveMembers() throws DatabaseException;
     
     /**
      * Activates a member.
@@ -75,7 +75,7 @@ public interface SocioService {
      * @throws EntityNotFoundException if member not found
      * @throws DatabaseException if database operation fails
      */
-    void activarSocio(Long id) throws EntityNotFoundException, DatabaseException;
+    void activateMember(Long id) throws EntityNotFoundException, DatabaseException;
     
     /**
      * Deactivates a member.
@@ -84,5 +84,5 @@ public interface SocioService {
      * @throws EntityNotFoundException if member not found
      * @throws DatabaseException if database operation fails
      */
-    void desactivarSocio(Long id) throws EntityNotFoundException, DatabaseException;
+    void deactivateMember(Long id) throws EntityNotFoundException, DatabaseException;
 }

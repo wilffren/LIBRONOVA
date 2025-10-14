@@ -1,34 +1,34 @@
 package com.mycompany.libronova.repository;
 
-import com.mycompany.libronova.domain.Prestamo;
+import com.mycompany.libronova.domain.Loan;
 import com.mycompany.libronova.exceptions.DatabaseException;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for Prestamo entity operations.
+ * Repository interface for Loan entity operations.
  * 
  * @author Wilffren Muñoz
  */
-public interface PrestamoRepository {
+public interface LoanRepository {
     
     /**
      * Saves a new loan to the database.
      * 
-     * @param prestamo the loan to save
+     * @param loan the loan to save
      * @return the saved loan with generated ID
      * @throws DatabaseException if database operation fails
      */
-    Prestamo save(Prestamo prestamo) throws DatabaseException;
+    Loan save(Loan loan) throws DatabaseException;
     
     /**
      * Updates an existing loan.
      * 
-     * @param prestamo the loan to update
+     * @param loan the loan to update
      * @return the updated loan
      * @throws DatabaseException if database operation fails
      */
-    Prestamo update(Prestamo prestamo) throws DatabaseException;
+    Loan update(Loan loan) throws DatabaseException;
     
     /**
      * Finds a loan by ID.
@@ -37,7 +37,7 @@ public interface PrestamoRepository {
      * @return an Optional containing the loan if found
      * @throws DatabaseException if database operation fails
      */
-    Optional<Prestamo> findById(Long id) throws DatabaseException;
+    Optional<Loan> findById(Long id) throws DatabaseException;
     
     /**
      * Retrieves all loans from the database.
@@ -45,25 +45,25 @@ public interface PrestamoRepository {
      * @return list of all loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> findAll() throws DatabaseException;
+    List<Loan> findAll() throws DatabaseException;
     
     /**
      * Finds all active loans for a specific member.
      * 
-     * @param socioId the member ID
+     * @param memberId the member ID
      * @return list of active loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> findActivosBySocioId(Long socioId) throws DatabaseException;
+    List<Loan> findActiveByMemberId(Long memberId) throws DatabaseException;
     
     /**
      * Finds all active loans for a specific book.
      * 
-     * @param libroId the book ID
+     * @param bookId the book ID
      * @return list of active loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> findActivosByLibroId(Long libroId) throws DatabaseException;
+    List<Loan> findActiveByBookId(Long bookId) throws DatabaseException;
     
     /**
      * Finds all overdue loans.
@@ -71,5 +71,5 @@ public interface PrestamoRepository {
      * @return list of overdue loans
      * @throws DatabaseException if database operation fails
      */
-    List<Prestamo> findVencidos() throws DatabaseException;
+    List<Loan> findOverdue() throws DatabaseException;
 }
