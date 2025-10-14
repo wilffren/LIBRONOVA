@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LibroNova
+GenericName=Library Management System
+Comment=Complete library management system for books, members, and loans
+Exec=bash -c "cd '/home/Coder/NetBeansProjects/LIBRONOVA/TestPerformance' && java -jar '/home/Coder/NetBeansProjects/LIBRONOVA/TestPerformance/distribution/executable/LibroNova-executable.jar'"
+Icon=/home/Coder/NetBeansProjects/LIBRONOVA/TestPerformance/docs/icons/libronova
+Path=/home/Coder/NetBeansProjects/LIBRONOVA/TestPerformance
+Terminal=false
+Categories=Office;Education;Database;
+StartupWMClass=com.mycompany.libronova.ui.MainApp
+MimeType=application/x-java-archive;
+StartupNotify=true
+Keywords=library;books;loans;management;database;
